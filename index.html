@@ -2408,10 +2408,19 @@
             `).join('');
         }
 
+        const PUBLIC_APP_URL = 'https://thanakit44000.github.io/Pruksa-Plern/';
+
+        function getCategoryShareUrl(catId) {
+            const url = new URL(PUBLIC_APP_URL);
+            url.searchParams.set('qrCategory', catId);
+            return url.toString();
+        }
+
         function renderQRCodeTags() {
             const grid = document.getElementById('qrcode-cards-grid');
             grid.innerHTML = botanicalCategories.map(cat => {
-                const qrData = encodeURIComponent(`PhruksaPhaPhloen-Phadungnaree-${cat.id}-${cat.name}`);
+                const categoryUrl = getCategoryShareUrl(cat.id);
+                const qrData = encodeURIComponent(categoryUrl);
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${qrData}`;
                 return `
                     <div class="bg-white p-5 rounded-2xl border-2 border-emerald-200 shadow-sm flex flex-col items-center text-center">
@@ -2420,8 +2429,9 @@
                         <p class="text-xs text-slate-500 mb-3">สารานุกรมไทยสำหรับเยาวชนฯ เล่มที่ 21</p>
                         <img src="${qrUrl}" alt="QR ${cat.name}" class="w-36 h-36 rounded-xl border p-2 bg-white mb-3">
                         <div class="text-xs text-slate-600 mb-3">ตัวอย่างพรรณไม้: <b>${cat.examplesText}</b></div>
+                        <a href="${categoryUrl}" target="_blank" rel="noopener" class="mb-2 break-all text-[10px] font-semibold text-sky-700 underline">${categoryUrl}</a>
                         <button onclick="switchView('game'); setTimeout(()=>openCategoryModal('${cat.id}'), 200);" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition">
-                            📲 จำลองการสแกน QR Code เข้าสู่บทเรียนทันที
+                            📲 ทดลองเปิดบทเรียนจาก QR
                         </button>
                     </div>
                 `;
@@ -2979,6 +2989,20 @@
             showAdminLogin();
         }
 
+        function openRequestedQrCategory() {
+            const catId = new URLSearchParams(window.location.search).get('qrCategory');
+            if (!catId || !botanicalCategories.some(cat => cat.id === catId)) return false;
+            playerName = 'นักสำรวจจาก QR Code';
+            document.getElementById('player-name-input').value = playerName;
+            setAppMode('user');
+            document.getElementById('game-login-modal').classList.add('hidden');
+            setTimeout(() => {
+                switchView('game');
+                openCategoryModal(catId);
+            }, 180);
+            return true;
+        }
+
         window.onload = async function() {
             restoreAppState();
             resizeGameCanvas();
@@ -2994,7 +3018,7 @@
             renderProjectSettings();
             renderVerificationTable();
             generateDraftRiddle();
-            returnToRoleSelection();
+            if (!openRequestedQrCategory()) returnToRoleSelection();
             gameAnimationLoop();
             loadSharedStateFromCloud().then(changed => {
                 if (!changed) return;
