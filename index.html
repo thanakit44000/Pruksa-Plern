@@ -180,7 +180,34 @@
             pointer-events: none !important;
         }
         @media (max-width: 640px) {
-            #topbar-hearts-wrap { position: fixed; right: 10px; bottom: 10px; z-index: 35; box-shadow: 0 8px 25px rgba(190,24,93,.18); }
+            body { overflow-x: hidden; }
+            #app-topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .5rem; min-height: 0; padding: .55rem .65rem; }
+            #topbar-brand { gap: .5rem; }
+            #topbar-brand > div { min-width: 0; }
+            #topbar-source-title { display: none; }
+            #topbar-title { display: -webkit-box; overflow: hidden; font-size: .78rem; line-height: 1.15; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+            #topbar-actions { margin-left: 0; flex-wrap: nowrap; gap: .35rem; }
+            #topbar-actions > button { width: 2.35rem; height: 2.35rem; flex: 0 0 2.35rem; justify-content: center; padding: 0; border-radius: .8rem; }
+            #topbar-hearts-wrap { position: absolute; top: calc(100% + .5rem); right: .65rem; z-index: 25; display: flex !important; padding: .35rem .55rem; box-shadow: 0 6px 18px rgba(190,24,93,.16); }
+            #topbar-hearts-wrap > span { display: none; }
+            .content-shell { padding: .45rem; }
+            #game-container { height: calc(100dvh - 64px); min-height: 500px; border-width: 2px; border-radius: 1.1rem; }
+            #game-hud { padding: .55rem; }
+            #game-hud-top { gap: .35rem; padding-right: 4.6rem; }
+            #game-location-card { align-self: flex-start; max-width: calc(100% - .25rem); padding: .4rem .55rem; gap: .4rem; }
+            #game-location-card > span { font-size: 1.1rem; }
+            #game-location-label { display: none; }
+            #game-category-badges { align-self: flex-start; width: auto; max-width: calc(100% - .25rem); padding: .3rem .4rem; }
+            #game-category-badges > div { width: 1.7rem; height: 1.7rem; flex: 0 0 1.7rem; font-size: .85rem; }
+            #game-bottom-controls { gap: .5rem; }
+            #mobile-dpad { width: 6.6rem; height: 6.6rem; gap: .18rem; }
+            #mobile-dpad button { border-bottom-width: 3px; border-radius: .65rem; font-size: 1rem; }
+            #btn-game-interact { max-width: 9.5rem; padding: .65rem .85rem; font-size: .78rem; line-height: 1.1; }
+            #game-login-modal { align-items: flex-start; overflow-y: auto; padding: .65rem; }
+            #game-login-modal > div { margin: auto; padding: 1rem; }
+            #game-login-modal h1 { font-size: 1.55rem; }
+            #game-login-modal .animate-float { width: 4.5rem; height: 4.5rem; margin-bottom: .75rem; font-size: 2.5rem; }
+            #game-login-modal .grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -319,8 +346,8 @@
         <!-- Main Workspace -->
         <main class="flex flex-col min-w-0">
             <!-- Topbar -->
-            <header class="min-h-16 bg-white/95 backdrop-blur-md border-b border-emerald-100 px-3 py-3 md:px-6 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-30">
-                <div class="flex min-w-0 flex-1 items-center gap-3">
+            <header id="app-topbar" class="min-h-16 bg-white/95 backdrop-blur-md border-b border-emerald-100 px-3 py-3 md:px-6 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-30">
+                <div id="topbar-brand" class="flex min-w-0 flex-1 items-center gap-3">
                     <button class="lg:hidden w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200" onclick="toggleSidebar()">
                         <i class="fa-solid fa-bars"></i>
                     </button>
@@ -330,7 +357,7 @@
                     </div>
                 </div>
 
-                <div class="ml-auto flex flex-wrap items-center justify-end gap-2">
+                <div id="topbar-actions" class="ml-auto flex flex-wrap items-center justify-end gap-2">
                     <div id="topbar-hearts-wrap" class="hidden sm:flex items-center gap-1.5 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-full">
                         <span class="text-xs font-bold text-rose-600">พลังใจ:</span>
                         <div id="topbar-hearts" class="flex"></div>
@@ -348,7 +375,7 @@
             </header>
 
             <!-- Content Container -->
-            <div class="p-3 md:p-6 flex-1 max-w-7xl w-full mx-auto">
+            <div class="content-shell p-3 md:p-6 flex-1 max-w-7xl w-full mx-auto">
 
                 <!-- ==========================================
                      VIEW 1: 2D ADVENTURE & RIDDLE GAME
@@ -390,19 +417,19 @@
                         </div>
 
                         <!-- In-Game HUD Overlay -->
-                        <div class="game-overlay flex flex-col justify-between p-4">
+                        <div id="game-hud" class="game-overlay flex flex-col justify-between p-4">
                             <!-- Top HUD -->
-                            <div class="flex w-full flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between">
-                                <div class="bg-white/90 backdrop-blur-md px-3 py-2 rounded-2xl shadow border border-emerald-100 flex min-w-0 items-center gap-3 sm:max-w-[48%]">
+                            <div id="game-hud-top" class="flex w-full flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                <div id="game-location-card" class="bg-white/90 backdrop-blur-md px-3 py-2 rounded-2xl shadow border border-emerald-100 flex min-w-0 items-center gap-3 sm:max-w-[48%]">
                                     <span class="text-2xl" id="hud-map-icon">🏫</span>
                                     <div>
-                                        <div class="text-[11px] font-bold text-emerald-600 uppercase">พื้นที่สำรวจปัจจุบัน</div>
+                                        <div id="game-location-label" class="text-[11px] font-bold text-emerald-600 uppercase">พื้นที่สำรวจปัจจุบัน</div>
                                         <div class="truncate font-extrabold text-slate-800 text-sm md:text-base" id="hud-map-name">จังหวัดมหาสารคาม</div>
                                     </div>
                                 </div>
 
                                 <!-- 6 Category Badges -->
-                                <div class="bg-white/90 backdrop-blur-md px-2 py-2 rounded-2xl shadow border border-emerald-100 flex max-w-full items-center justify-center gap-1 overflow-x-auto sm:justify-start">
+                                <div id="game-category-badges" class="bg-white/90 backdrop-blur-md px-2 py-2 rounded-2xl shadow border border-emerald-100 flex max-w-full items-center justify-center gap-1 overflow-x-auto sm:justify-start">
                                     <span class="text-xs font-bold text-slate-500 mr-1 hidden md:inline">ตราพรรณไม้ 6 หมวด:</span>
                                     <div id="badge-cat1" class="w-8 h-8 rounded-full bg-slate-100 border flex items-center justify-center opacity-40 transition" title="1. พืชสมุนไพร">🌿</div>
                                     <div id="badge-cat2" class="w-8 h-8 rounded-full bg-slate-100 border flex items-center justify-center opacity-40 transition" title="2. พืชอาหาร">🍲</div>
@@ -414,9 +441,9 @@
                             </div>
 
                             <!-- Middle / Bottom Controls -->
-                            <div class="flex justify-between items-end w-full mt-auto">
+                            <div id="game-bottom-controls" class="flex justify-between items-end w-full mt-auto">
                                 <!-- Mobile D-Pad -->
-                                <div class="grid grid-cols-3 grid-rows-3 gap-1 w-32 h-32 md:w-36 md:h-36 select-none" style="touch-action: none;">
+                                <div id="mobile-dpad" class="grid grid-cols-3 grid-rows-3 gap-1 w-32 h-32 md:w-36 md:h-36 select-none" style="touch-action: none;">
                                     <div></div>
                                     <button class="bg-white/90 active:bg-emerald-200 rounded-xl shadow border-b-4 border-emerald-300 font-bold text-emerald-700 text-xl flex items-center justify-center" onpointerdown="setKey(event,'w',true)" onpointerup="setKey(event,'w',false)" onpointerleave="setKey(event,'w',false)">▲</button>
                                     <div></div>
@@ -1396,19 +1423,20 @@
         function setupSchoolNodes() {
             const cw = canvas.width;
             const ch = canvas.height;
+            const mobileMap = cw < 520;
             specialNodes = [
                 {
                     id: 'node_camera',
                     type: 'CAMERA',
                     name: 'จุดส่งภาพปักหมุด',
                     icon: '📸',
-                    x: cw * 0.35,
-                    y: ch * 0.50,
+                    x: cw * (mobileMap ? 0.37 : 0.35),
+                    y: ch * (mobileMap ? 0.46 : 0.50),
                     label: 'จุดถ่ายภาพสำรวจ (Crowdsourcing)'
                 },
-                { id:'node_clocktower',type:'CLOCKTOWER',name:'หอนาฬิกามหาสารคาม',icon:'🕰️',x:cw*.50,y:ch*.50,label:'หอนาฬิกา • ศูนย์กลางเมือง' },
-                { id:'node_school',type:'SCHOOL',name:'โรงเรียนผดุงนารี',icon:'🏫',x:cw*.18,y:ch*.52,label:'โรงเรียนผดุงนารี • จุดกำเนิดโครงงาน' },
-                { id:'node_map',type:'PLANT_MAP',name:'แผนที่พรรณไม้',icon:'🗺️',x:cw*.68,y:ch*.50,label:'ดูภาพและหมุดพรรณไม้ทั่วจังหวัด' }
+                { id:'node_clocktower',type:'CLOCKTOWER',name:'หอนาฬิกามหาสารคาม',icon:'🕰️',x:cw*(mobileMap?.63:.50),y:ch*(mobileMap?.46:.50),label:'หอนาฬิกา • ศูนย์กลางเมือง' },
+                { id:'node_school',type:'SCHOOL',name:'โรงเรียนผดุงนารี',icon:'🏫',x:cw*(mobileMap?.37:.18),y:ch*(mobileMap?.57:.52),label:'โรงเรียนผดุงนารี • จุดกำเนิดโครงงาน' },
+                { id:'node_map',type:'PLANT_MAP',name:'แผนที่พรรณไม้',icon:'🗺️',x:cw*(mobileMap?.63:.68),y:ch*(mobileMap?.57:.50),label:'ดูภาพและหมุดพรรณไม้ทั่วจังหวัด' }
             ];
         }
 
@@ -1642,6 +1670,7 @@
         function drawBotanicalMap() {
             const cw = canvas.width;
             const ch = canvas.height;
+            const mobileMap = cw < 520;
             ctx.clearRect(0, 0, cw, ch);
 
             if (currentSceneId !== 'main') {
@@ -1674,7 +1703,7 @@
             // วาดวงกลมลานกลางโรงเรียนผดุงนารี
             ctx.fillStyle = 'rgba(254, 243, 199, 0.85)';
             ctx.beginPath();
-            ctx.arc(cw * 0.5, ch * 0.5, 95, 0, Math.PI * 2);
+            ctx.arc(cw * 0.5, ch * 0.515, mobileMap ? 68 : 95, 0, Math.PI * 2);
             ctx.fill();
             ctx.strokeStyle = '#fbbf24';
             ctx.lineWidth = 3;
@@ -1693,7 +1722,7 @@
                 if (nearestNode && nearestNode.kind === 'CATEGORY' && nearestNode.data.id === cat.id) {
                     ctx.fillStyle = 'rgba(16, 185, 129, 0.3)';
                     ctx.beginPath();
-                    ctx.arc(0, 0, 56 + Math.sin(Date.now()*0.01)*4, 0, Math.PI*2);
+                    ctx.arc(0, 0, (mobileMap ? 43 : 56) + Math.sin(Date.now()*0.01)*4, 0, Math.PI*2);
                     ctx.fill();
                 }
 
@@ -1701,14 +1730,14 @@
                 ctx.shadowColor = 'rgba(6, 78, 59, 0.2)';
                 ctx.shadowBlur = 12;
                 ctx.beginPath();
-                ctx.arc(0, 0, 44, 0, Math.PI * 2);
+                ctx.arc(0, 0, mobileMap ? 36 : 44, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.lineWidth = 4;
                 ctx.strokeStyle = isDone ? '#10b981' : '#f59e0b';
                 ctx.stroke();
                 ctx.shadowBlur = 0;
 
-                ctx.font = '34px Arial';
+                ctx.font = `${mobileMap ? 28 : 34}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(cat.icon, 0, 2);
@@ -1719,12 +1748,12 @@
                 }
 
                 // ป้ายชื่อหมวดหมู่
-                ctx.font = 'bold 14px Prompt';
+                ctx.font = `bold ${mobileMap ? 11 : 14}px Prompt`;
                 ctx.fillStyle = '#064e3b';
-                ctx.fillText(`${cat.order}. ${cat.name}`, 0, 62);
-                ctx.font = '11px Prompt';
+                ctx.fillText(`${cat.order}. ${cat.name}`, 0, mobileMap ? 50 : 62);
+                ctx.font = `${mobileMap ? 9 : 11}px Prompt`;
                 ctx.fillStyle = '#047857';
-                ctx.fillText(`(${cat.speciesCount} ชนิด · ${cat.pinsCount} จุด)`, 0, 78);
+                ctx.fillText(`(${cat.speciesCount} ชนิด · ${cat.pinsCount} จุด)`, 0, mobileMap ? 63 : 78);
                 ctx.restore();
             });
 
@@ -1734,20 +1763,22 @@
                 ctx.translate(node.x, node.y);
                 ctx.fillStyle = '#ffffff';
                 ctx.beginPath();
-                ctx.arc(0, 0, 30, 0, Math.PI * 2);
+                ctx.arc(0, 0, mobileMap ? 23 : 30, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.strokeStyle = '#38bdf8';
                 ctx.lineWidth = 3;
                 ctx.stroke();
 
-                ctx.font = '26px Arial';
+                ctx.font = `${mobileMap ? 20 : 26}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(node.icon, 0, 2);
 
-                ctx.font = 'bold 12px Prompt';
-                ctx.fillStyle = '#1e293b';
-                ctx.fillText(node.label, 0, -40);
+                if (!mobileMap) {
+                    ctx.font = 'bold 12px Prompt';
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillText(node.label, 0, -40);
+                }
                 ctx.restore();
             });
 
