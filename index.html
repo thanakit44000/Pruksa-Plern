@@ -164,8 +164,21 @@
         }
         body.user-mode .app-layout { grid-template-columns: 1fr; }
         body.user-mode button[onclick="toggleSidebar()"] { display: none !important; }
-        #role-gateway { display: none; }
-        body.access-pending #role-gateway { display: flex; }
+        #role-gateway {
+            display: none;
+            pointer-events: auto;
+            isolation: isolate;
+            touch-action: pan-y;
+        }
+        body.access-pending #role-gateway {
+            display: flex;
+            z-index: 2147483647 !important;
+        }
+        body.access-pending #game-canvas,
+        body.access-pending .game-overlay,
+        body.access-pending .app-layout {
+            pointer-events: none !important;
+        }
         @media (max-width: 640px) {
             #topbar-hearts-wrap { position: fixed; right: 10px; bottom: 10px; z-index: 35; box-shadow: 0 8px 25px rgba(190,24,93,.18); }
         }
@@ -183,13 +196,13 @@
             </div>
 
             <div id="role-choice" class="mt-8 space-y-4">
-                <button onclick="enterStudentMode()" class="group w-full rounded-3xl border-2 border-emerald-300 bg-gradient-to-r from-emerald-500 to-teal-600 p-7 text-left text-white shadow-xl transition hover:-translate-y-1 hover:shadow-2xl">
+                <button type="button" onclick="enterStudentMode(event)" class="group relative z-10 w-full rounded-3xl border-2 border-emerald-300 bg-gradient-to-r from-emerald-500 to-teal-600 p-7 text-left text-white shadow-xl transition hover:-translate-y-1 hover:shadow-2xl">
                     <div class="text-4xl">🧑‍🎓</div>
                     <h2 class="mt-4 text-2xl font-black">เริ่มต้นสำรวจสวนพฤกษศาสตร์</h2>
                     <p class="mt-1 text-sm text-emerald-50">สำหรับนักเรียนทั่วไป อ่านคำชี้แจง กรอกชื่อ และเริ่มการผจญภัย</p>
                     <span class="mt-4 inline-flex rounded-full bg-white px-5 py-2 font-black text-emerald-700">เข้าสู่กิจกรรม →</span>
                 </button>
-                <button onclick="showAdminLogin()" class="mx-auto flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">
+                <button type="button" onclick="showAdminLogin(event)" class="relative z-10 mx-auto flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">
                     <span>🛡️</span><span>เข้าสู่ระบบสำหรับครู/ผู้ดูแล</span>
                 </button>
             </div>
@@ -1399,7 +1412,10 @@
             ];
         }
 
-        window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+        window.addEventListener('keydown', e => {
+            if (document.body.classList.contains('access-pending')) return;
+            keys[e.key.toLowerCase()] = true;
+        });
         window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
         // ลดการเลือกข้อความโดยไม่ตั้งใจบนปุ่ม/เกม และปิดเมนูคลิกขวา
@@ -1419,6 +1435,8 @@
         }
 
         canvas.addEventListener('pointerdown', e => {
+            if (document.body.classList.contains('access-pending')) return;
+            if (!document.getElementById('view-game')?.classList.contains('active')) return;
             const rect = canvas.getBoundingClientRect();
             targetPos = {
                 x: e.clientX - rect.left,
@@ -2880,11 +2898,17 @@
             }
         }
 
-        function enterStudentMode() {
-            setAppMode('user');
+        function enterStudentMode(event) {
+            event?.preventDefault();
+            event?.stopPropagation();
+            Object.keys(keys).forEach(key => keys[key] = false);
+            targetPos = null;
+            setTimeout(() => setAppMode('user'), 40);
         }
 
-        function showAdminLogin() {
+        function showAdminLogin(event) {
+            event?.preventDefault();
+            event?.stopPropagation();
             document.getElementById('role-choice').classList.add('hidden');
             document.getElementById('admin-login-panel').classList.remove('hidden');
             document.getElementById('admin-login-error').classList.add('hidden');
@@ -2909,6 +2933,8 @@
         }
 
         function returnToRoleSelection() {
+            Object.keys(keys).forEach(key => keys[key] = false);
+            targetPos = null;
             document.body.classList.remove('user-mode', 'admin-mode');
             document.body.classList.add('access-pending');
             document.getElementById('role-choice').classList.remove('hidden');
